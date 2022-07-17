@@ -1,4 +1,12 @@
-const { Film, Genre , Photo, Video ,Actor,GenreFilm,CategoryFilm,sequelize } = require('../models/index')
+const { Film, 
+    Genre ,
+    Category,
+    Photo,
+    Video ,
+    Actor,
+    GenreFilm,
+    CategoryFilm,
+    sequelize } = require('../models/index')
 
 const addFilm = async (req,res) => {
     const {
@@ -236,9 +244,51 @@ const getFilmByGenre = async (req,res) => {
     })
 }
 
+const getFilmByCategory = async (req,res) => {
+    const {id_category} = req.body;
+
+    await CategoryFilm.findAll({
+        where: {
+            id_category: id_category
+        },
+        attributes: [
+            'id',
+            [sequelize.literal(`"FkCategoryFilmFilm"."title"`), "TitleFilm"],
+            [sequelize.literal(`"FkCategoryFilmFilm"."year"`), "YearFilm"],
+            [sequelize.literal(`"FkCategoryFilmFilm"."director"`), "DirectorFilm"],
+            [sequelize.literal(`"FkCategoryFilmFilm"."rating"`), "RatingFilm"],
+            [sequelize.literal(`"FkCategoryFilmCategory"."name"`), "CategoryFilm"],
+        ],
+        subQuery: false,
+        include: [
+            {
+                model: Film,
+                as: "FkCategoryFilmFilm",
+                attributes:[]
+            
+            },
+            {
+                model: Category,
+                as: "FkCategoryFilmCategory",
+                attributes:[]
+            }
+        ]
+    }).then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status: "fail"
+        })
+    })
+}
+
 module.exports = {
     addFilm,
     allFilm,
     getFilmByTitle,
-    getFilmByGenre
+    getFilmByGenre,
+    getFilmByCategory
 }

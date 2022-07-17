@@ -6,7 +6,8 @@ const {
     addFilm,
     allFilm,
     getFilmByTitle,
-    getFilmByGenre
+    getFilmByGenre,
+    getFilmByCategory
 } = require('../controllers/film.controller')
 
 
@@ -14,6 +15,7 @@ router.post('/', verify,addFilm);
 router.get('/', allFilm);
 router.get('/byTitle', getFilmByTitle);
 router.get('/byGenre', getFilmByGenre);
+router.get('/byCategory', getFilmByCategory);
 
 
 module.exports = router ;
