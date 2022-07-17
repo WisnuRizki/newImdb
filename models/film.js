@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: "id_film",
 				as: "FkFilmActor",
 			});
+
+      this.hasMany(models.GenreFilm, {
+				foreignKey: "id_film",
+				as: "FkFilmGenreFilm",
+			});
     }
   }
   Film.init({

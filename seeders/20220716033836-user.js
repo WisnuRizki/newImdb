@@ -12,7 +12,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    const pass = bcrypt.hashSync('wisnu@gmail.com', 10)
+    const pass = bcrypt.hashSync('ADMINimdb', 10)
      await queryInterface.bulkInsert('Users', [{
       firstName: 'wisnu',
       lastName: "rizki",

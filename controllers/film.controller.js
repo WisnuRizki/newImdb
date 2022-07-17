@@ -95,15 +95,34 @@ const allFilm = async (req,res) => {
         include: [
             {
                 model: Video,
-                as: "FkFilmVideo"
+                as: "FkFilmVideo",
+                attributes: ['videoUrl']
             },
             {
                 model: Photo,
-                as: "FkFilmPhoto"
+                as: "FkFilmPhoto",
+                attributes: ['photoUrl']
             },
             {
                 model: Actor,
-                as: "FkFilmActor"
+                as: "FkFilmActor",
+                attributes: ['name']
+            },
+            {
+                model: GenreFilm,
+                as: 'FkFilmGenreFilm',
+                attributes: [
+    
+                    [sequelize.literal(`"FkFilmGenreFilm->FkGenreGenreFilm"."name"`), "nameGenre"]
+                ],
+                subQuery: false,
+                include:[
+                    {
+                        model: Genre,
+                        as: "FkGenreGenreFilm",
+                        attributes: []
+                    }
+                ]
             }
         ]
     }).then(data => {
