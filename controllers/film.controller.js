@@ -113,13 +113,13 @@ const allFilm = async (req,res) => {
                 as: 'FkFilmGenreFilm',
                 attributes: [
     
-                    [sequelize.literal(`"FkFilmGenreFilm->FkGenreGenreFilm"."name"`), "nameGenre"]
+                    [sequelize.literal(`"FkFilmGenreFilm->FkGenreFilmGenre"."name"`), "nameGenre"]
                 ],
                 subQuery: false,
                 include:[
                     {
                         model: Genre,
-                        as: "FkGenreGenreFilm",
+                        as: "FkGenreFilmGenre",
                         attributes: []
                     }
                 ]
@@ -137,7 +137,108 @@ const allFilm = async (req,res) => {
     })
 }
 
+const getFilmByTitle = async (req,res) => {
+    const {title} = req.body;
+
+    await Film.findOne({
+        where: {
+            title: title
+        },attributes: [
+            'title',
+            'year',
+            'director',
+            'rating'
+        ],
+        subQuery: false,
+		raw: false,
+        include: [
+            {
+                model: Video,
+                as: "FkFilmVideo",
+                attributes: ['videoUrl']
+            },
+            {
+                model: Photo,
+                as: "FkFilmPhoto",
+                attributes: ['photoUrl']
+            },
+            {
+                model: Actor,
+                as: "FkFilmActor",
+                attributes: ['name']
+            },
+            {
+                model: GenreFilm,
+                as: 'FkFilmGenreFilm',
+                attributes: [
+    
+                    [sequelize.literal(`"FkFilmGenreFilm->FkGenreFilmGenre"."name"`), "nameGenre"]
+                ],
+                subQuery: false,
+                include:[
+                    {
+                        model: Genre,
+                        as: "FkGenreFilmGenre",
+                        attributes: []
+                    }
+                ]
+            }
+        ]
+    }).then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status: "Fail",
+            message: "Fail"
+        })
+    })
+}
+
+const getFilmByGenre = async (req,res) => {
+    const {id_genre} = req.body;
+
+    GenreFilm.findAll({
+        where: {
+            id_genre: id_genre
+        },
+        attributes: [
+            [sequelize.literal(`"FkGenreFilmFilm"."title"`), "TitleFilm"],
+            [sequelize.literal(`"FkGenreFilmFilm"."year"`), "YearFilm"],
+            [sequelize.literal(`"FkGenreFilmFilm"."director"`), "DirectorFilm"],
+            [sequelize.literal(`"FkGenreFilmFilm"."rating"`), "RatingFilm"],
+            [sequelize.literal(`"FkGenreFilmGenre"."name"`), "GenreName"]
+        ],
+        subQuery: false,
+        include: [
+            {
+                model: Film,
+                as: "FkGenreFilmFilm",
+                attributes: []
+            },
+            {
+                model: Genre,
+                as: "FkGenreFilmGenre",
+                attributes: []
+            }
+        ]
+    }).then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status:"Fail"
+        })
+    })
+}
+
 module.exports = {
     addFilm,
-    allFilm
+    allFilm,
+    getFilmByTitle,
+    getFilmByGenre
 }

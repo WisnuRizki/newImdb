@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 
       this.belongsTo(models.Genre, {
 				foreignKey: "id_genre",
-				as: "FkGenreGenreFilm",
+				as: "FkGenreFilmGenre",
 			});
     }
   }
