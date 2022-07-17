@@ -1,3 +1,4 @@
+const req = require('express/lib/request');
 const { Film, 
     Genre ,
     Category,
@@ -285,10 +286,137 @@ const getFilmByCategory = async (req,res) => {
     })
 }
 
+const addFilmGenre = async (req,res) => {
+    const {id_film,id_genre} = req.body;
+
+    if(req.role === "admin"){
+        GenreFilm.findAll({
+            where: {
+                id_film:id_film,
+                id_genre: id_genre
+            }
+        }).then(data => {
+            console.log(data)
+            if(data.length === 0){
+                GenreFilm.create({
+                    id_film: id_film,
+                    id_genre: id_genre
+                }).then(data => {
+                    res.status(200).json({
+                        status: "success",
+                        message: "berhasil menambahkan genre"
+                    })
+                })
+            }else{
+                res.status(400).json({
+                    status: "fail",
+                    message: "genre film already exist"
+                })
+            }
+        })
+    }else{
+        res.status(400).json({
+            status: "fail",
+            message: "user not authorized"
+        })
+    }
+
+    
+}
+
+const updateFilm = async (req,res) => {
+    const {id} = req.params;
+
+    if(req.role === "admin"){
+        await Film.update(req.body,{
+            where: {
+                id: id
+            }
+        }).then(data => {
+            return res.status(200).json({
+                status: "success",
+                message: "berhasil mengupdate film"
+            })
+        }).catch(e => {
+            return res.status(400).json({
+                status: "fail'",
+                message: "gagal mengupdate film"
+            })
+        })
+    }else{
+        return res.status(400).json({
+            status: "fail",
+            message: "user not authorized"
+        })
+    }
+
+    
+}
+
+const deleteFilm = async (req,res) => {
+    const {id} = req.params
+    
+    try {
+
+        const result = await sequelize.transaction(async (t) => {
+        
+            const deleteFilm = await Film.destroy({
+                where: {
+                    id: id
+                }
+            }, { transaction: t })
+
+            const deleteGenreFilm = await GenreFilm.destroy({
+                where: {
+                    id_film: id
+                }
+            }, { transaction: t })
+
+            const deleteCategoryFilm = await CategoryFilm.destroy({
+                where: {
+                    id_film: id
+                }
+            }, { transaction: t })
+
+            const deletePhoto = await Photo.destroy({
+                where: {
+                    id_film: id
+                }
+            }, { transaction: t })
+
+            const deleteVideo = await Video.destroy({
+                where: {
+                    id_film: id
+                }
+            }, { transaction: t })
+
+            const deleteActor = await Actor.destroy({
+                where: {
+                    id_film: id
+                }
+            }, { transaction: t })
+        
+            return res.status(200).json({
+                status: 'Sukses',
+                message: 'sukses menghapus Film'
+            })
+        });
+      
+      } catch (error) {
+        return res.status(400).json({
+            status: 'Gagal',
+            message: 'Gagal menghapus Film'
+        })
+      }
+}
+
 module.exports = {
     addFilm,
     allFilm,
     getFilmByTitle,
     getFilmByGenre,
-    getFilmByCategory
+    getFilmByCategory,
+    addFilmGenre,
+    updateFilm,
+    deleteFilm
 }
