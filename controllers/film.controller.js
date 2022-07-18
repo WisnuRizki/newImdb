@@ -410,6 +410,38 @@ const deleteFilm = async (req,res) => {
       }
 }
 
+const orderByDesc = async (req,res) => {
+    Film.findAll({
+        order: [
+            ['rating','DESC']
+        ]
+    }).then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status: "fail"
+        })
+    })
+}
+
+const orderByAsce = async (req,res) => {
+    Film.findAll({
+        order: sequelize.col('rating')
+    }).then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status: "fail"
+        })
+    })
+}
+
 module.exports = {
     addFilm,
     allFilm,
@@ -418,5 +450,7 @@ module.exports = {
     getFilmByCategory,
     addFilmGenre,
     updateFilm,
-    deleteFilm
+    deleteFilm,
+    orderByDesc,
+    orderByAsce
 }

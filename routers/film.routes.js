@@ -10,13 +10,17 @@ const {
     getFilmByCategory,
     addFilmGenre,
     updateFilm,
-    deleteFilm
+    deleteFilm,
+    orderByDesc,
+    orderByAsce
 } = require('../controllers/film.controller');
 
 
 router.post('/', verify,addFilm);
 router.post('/addGenreFilm', verify,addFilmGenre);
 router.get('/', allFilm);
+router.get('/desc',orderByDesc)
+router.get('/asce',orderByAsce)
 router.get('/byTitle', getFilmByTitle);
 router.get('/byGenre', getFilmByGenre);
 router.get('/byCategory', getFilmByCategory);
