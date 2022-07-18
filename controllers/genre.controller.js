@@ -33,6 +33,78 @@ const addGenre = async (req,res) => {
     }
 }
 
+const allGenre = async (req,res) => {
+    Genre.findAll().then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status: "fail"
+        })
+    })
+}
+
+const updateGenre = async (req,res) => {
+    const {id} = req.params;
+
+    if(req.role === "admin"){
+        Genre.update(req.body,{
+            where: {
+                id: id
+            }
+        }).then(data => {
+            res.status(200).json({
+                status: "success",
+                message: "berhasil mengedit genre"
+            })
+        }).catch(e => {
+            res.status(400).json({
+                status: "gagal"
+            })
+        })
+    }else{
+        res.status(400).json({
+            status: "fail",
+            message: "user not authorized"
+        })
+    }
+
+    
+}
+
+const deleteGenre = async (req,res) => {
+    const {id} = req.params;
+
+    if(req.role){
+        Genre.destroy({
+            where: {
+                id: id
+            }
+        }).then(data => {
+            res.status(200).json({
+                status: "success",
+                message: "berhasil menghapus genre"
+            })
+        }).catch(e => {
+            res.status(400).json({
+                status: "gagal"
+            })
+        })
+    }else{
+        res.status(400).json({
+            status: "fail",
+            message: "user not authorized"
+        })
+    }
+
+    
+}
+
 module.exports = { 
-    addGenre
+    addGenre,
+    allGenre,
+    updateGenre,
+    deleteGenre
 }
