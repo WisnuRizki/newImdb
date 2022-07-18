@@ -77,7 +77,7 @@ const updateGenre = async (req,res) => {
 const deleteGenre = async (req,res) => {
     const {id} = req.params;
 
-    if(req.role){
+    if(req.role === "admin"){
         Genre.destroy({
             where: {
                 id: id

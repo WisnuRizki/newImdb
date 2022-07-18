@@ -26,6 +26,78 @@ const addPhoto = async (req,res) => {
     }
 }
 
+const allPhoto = async (req,res) => {
+    Photo.findAll().then(data => {
+        res.status(200).json({
+            status: "success",
+            data: data
+        })
+    }).catch(e => {
+        res.status(400).json({
+            status: "fail"
+        })
+    })
+}
+
+const updatePhoto = async (req,res) => {
+    const {id} = req.params;
+
+    if(req.role === "admin"){
+        Photo.update(req.body,{
+            where: {
+                id: id
+            }
+        }).then(data => {
+            res.status(200).json({
+                status: "success",
+                message: "berhasil mengedit Photo"
+            })
+        }).catch(e => {
+            res.status(400).json({
+                status: "gagal"
+            })
+        })
+    }else{
+        res.status(400).json({
+            status: "fail",
+            message: "user not authorized"
+        })
+    }
+
+    
+}
+
+const deletePhoto = async (req,res) => {
+    const {id} = req.params;
+
+    if(req.role === "admin"){
+        Photo.destroy({
+            where: {
+                id: id
+            }
+        }).then(data => {
+            res.status(200).json({
+                status: "success",
+                message: "berhasil menghapus Photo"
+            })
+        }).catch(e => {
+            res.status(400).json({
+                status: "gagal"
+            })
+        })
+    }else{
+        res.status(400).json({
+            status: "fail",
+            message: "user not authorized"
+        })
+    }
+
+    
+}
+
 module.exports = { 
-    addPhoto
+    addPhoto,
+    allPhoto,
+    updatePhoto,
+    deletePhoto
 }
